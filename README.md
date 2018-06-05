@@ -1,32 +1,16 @@
 # simple-editor
 
-FIXME: description
+A simple, proof-of-concept, Clojure-based editor.
 
 ## Installation
 
-Download from http://example.com/FIXME.
+Download from https://github.com/cheukyin699/cljeditor.
 
 ## Usage
 
-FIXME: explanation
-
-    $ java -jar simple-editor-0.1.0-standalone.jar [args]
-
-## Options
-
-FIXME: listing of options this app accepts.
-
-## Examples
-
-...
-
-### Bugs
-
-...
-
-### Any Other Sections
-### That You Think
-### Might be Useful
+```
+lein run YOUR_FILE.txt
+```
 
 ## License
 
