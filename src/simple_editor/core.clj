@@ -2,7 +2,8 @@
   (:use [simple-editor.help :only [HELP_TEXT]]
         [simple-editor.utils :only [clamp]]
         [clojure.string :only [split join]])
-  (:require [lanterna.screen :as scrn])
+  (:require [lanterna.screen :as scrn]
+            [simple-editor.edit :as edit])
   (:gen-class))
 
 (defn render-state
@@ -21,7 +22,13 @@
 (defn update-state
   "Updates the current state with the provided keypress"
   [k {:keys [lines pos] :as state}]
-  state)
+  (cond (= k :left)       (edit/handle-left state)
+        (= k :right)      (edit/handle-right state)
+        (= k :up)         (edit/handle-up state)
+        (= k :down)       (edit/handle-down state)
+        (= k :backspace)  (edit/handle-backspace state)
+        (= k :delete)     (edit/handle-delete state)
+        :else             (edit/handle-char k state)))
 
 (defn start-editing
   "Starts the editing loop. The only way to escape is by pressing escape."
