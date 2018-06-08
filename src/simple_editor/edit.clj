@@ -129,3 +129,8 @@
                                                      (subs current pos-x)))
                                         (subvec lines (inc pos-y))))
                    :pos    [(inc pos-x) pos-y]))))
+
+(defn handle-save
+  "Saves the file (side effect)"
+  [filename {:keys [lines] :as state}]
+  state)
