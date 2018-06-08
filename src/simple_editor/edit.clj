@@ -1,5 +1,6 @@
 (ns simple-editor.edit
-  (:use [simple-editor.utils :only [clamp]]))
+  (:use [simple-editor.utils :only [clamp]]
+        [clojure.string :only [join]]))
 
 (defn handle-left
   "Goes left until we hit the left-most boundary, and stop there"
@@ -133,4 +134,7 @@
 (defn handle-save
   "Saves the file (side effect)"
   [filename {:keys [lines] :as state}]
-  state)
+  (println (format "Save to '%s'? (Y/N)" filename))
+  (if (= (read-line) "Y")
+    (spit filename (join "\n" lines))
+    (println "Not saved")))

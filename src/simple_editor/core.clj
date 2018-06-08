@@ -34,23 +34,24 @@
 
 (defn start-editing
   "Starts the editing loop. The only way to escape is by pressing escape."
-  [screen {:keys [lines pos] :as state}]
+  [screen {:keys [lines pos filename] :as state}]
   (loop [screen screen
          state  state]
     (render-state screen state)
     (let [k (scrn/get-key-blocking screen)]
-      (if (= k :escape)
-        (scrn/stop screen)        ; End the editing session
+      (if (= k :escape)           ; Check to end editing session
+        (do (scrn/stop screen)
+            (edit/handle-save filename state))
         (recur screen (update-state k state))))))
 
 (defn -main
   ([] (println HELP_TEXT))
   ([& args]
    (let [filename (first args)
-         lines    (split (slurp filename) #"\n")
+         lines    (try (split (slurp filename) #"\n") (catch Exception e [""]))
          pos      [0 0]
          screen   (scrn/get-screen :unix)
-         state    {:lines lines :pos pos}]
+         state    {:lines lines :pos pos :filename filename}]
      (scrn/start screen)
      (start-editing               ; By using this method, we ignore any resizings and
        screen                     ; just tell the user to live with it
