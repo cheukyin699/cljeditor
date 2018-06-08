@@ -8,7 +8,7 @@
 (defn create-state
   "Creates a state where you provide the positions (and windows)"
   ([pos] {:lines content :pos pos :window [0 200]})
-  ([window pos] {:lines content :pos pos :window window}))
+  ([content pos] {:lines content :pos pos :window [0 200]}))
 
 (deftest unittest-left
   (testing "Basic cases"
@@ -54,29 +54,47 @@
 
 (deftest unittest-down
   (testing "Top cases"
-    (is (= (handle-up (create-state [6 0]))
+    (is (= (handle-down (create-state [6 0]))
            (create-state [6 1]))))
   (testing "Middle cases"
     (testing "moving from middle to middle"
-      (is (= (handle-up (create-state [1 1]))
+      (is (= (handle-down (create-state [1 1]))
              (create-state [1 2]))))
     (testing "moving from middle to shorter"
-      (is (= (handle-up (create-state [8 1]))
+      (is (= (handle-down (create-state [8 1]))
              (create-state [4 2]))))
     (testing "moving from middle to longer"
-      (is (= (handle-up (create-state [4 2]))
+      (is (= (handle-down (create-state [4 2]))
              (create-state [4 3])))))
   (testing "Low cases"
-    (is (= (handle-up (create-state [10 3]))
+    (is (= (handle-down (create-state [10 3]))
            (create-state [10 3])))))
 
 (deftest unittest-backspace
   (testing "Basic cases"
-    (is false)))
+    (testing "backspace from middle"
+      (is (= (handle-backspace (create-state [1 1]))
+             (create-state ["abcdef" "ijklmnop" "tsra" "qrstuvwxyz"] [0 1]))))
+    (testing "backspace from start of line"
+      (is (= (handle-backspace (create-state [0 1]))
+             (create-state ["abcdefhijklmnop" "tsra" "qrstuvwxyz"] [6 0])))))
+  (testing "Edge cases"
+    (testing "backspace from beginning of file"
+      (is (= (handle-backspace (create-state [0 0]))
+             (create-state [0 0]))))))
 
 (deftest unittest-delete
   (testing "Basic cases"
-    (is false)))
+    (testing "delete from middle"
+      (is (= (handle-delete (create-state [1 1]))
+             (create-state ["abcdef" "hjklmnop" "tsra" "qrstuvwxyz"] [1 1]))))
+    (testing "delete from end of line"
+      (is (= (handle-delete (create-state [9 1]))
+             (create-state ["abcdef" "hijklmnoptsra" "qrstuvwxyz"] [9 1])))))
+  (testing "Edge cases"
+    (testing "delete from end of file"
+      (is (= (handle-delete (create-state [10 3]))
+             (create-state [10 3]))))))
 
 (deftest unittest-home
   (testing "Basic cases"
@@ -104,5 +122,16 @@
 
 (deftest unittest-chars
   (testing "Basic cases"
-    (is false)))
+    (testing "some characters"
+      (is (= (handle-char \a (create-state [1 1]))
+             (create-state ["abcdef" "haijklmnop" "tsra" "qrstuvwxyz"] [2 1]))))
+    (testing "new line at end of line"
+      (is (= (handle-char :enter (create-state [9 1]))
+             (create-state ["abcdef" "hijklmnop" "" "tsra" "qrstuvwxyz"] [0 2]))))
+    (testing "new line in middle of line"
+      (is (= (handle-char :enter (create-state [1 1]))
+             (create-state ["abcdef" "h" "ijklmnop" "tsra" "qrstuvwxyz"] [0 2]))))
+    (testing "new line at start of line"
+      (is (= (handle-char :enter (create-state [0 1]))
+             (create-state ["abcdef" "" "hijklmnop" "tsra" "qrstuvwxyz"] [0 2]))))))
 

@@ -16,19 +16,21 @@
       (subvec lines
               (first window)      ; Doesn't need to be clamped - cannot be < 0
               (clamp 0 (count lines) (second window)))))
-  (scrn/move-cursor screen (:x pos) (- (:y pos) (first window)))
+  (scrn/move-cursor screen (first pos) (- (second pos) (first window)))
   (scrn/redraw screen))
 
 (defn update-state
   "Updates the current state with the provided keypress"
   [k {:keys [lines pos] :as state}]
-  (cond (= k :left)       (edit/handle-left state)
-        (= k :right)      (edit/handle-right state)
-        (= k :up)         (edit/handle-up state)
-        (= k :down)       (edit/handle-down state)
+  (cond (= k :left)       (edit/handle-left      state)
+        (= k :right)      (edit/handle-right     state)
+        (= k :up)         (edit/handle-up        state)
+        (= k :down)       (edit/handle-down      state)
         (= k :backspace)  (edit/handle-backspace state)
-        (= k :delete)     (edit/handle-delete state)
-        :else             (edit/handle-char k state)))
+        (= k :delete)     (edit/handle-delete    state)
+        (= k :home)       (edit/handle-home      state)
+        (= k :end)        (edit/handle-end       state)
+        :else             (edit/handle-char   k  state)))
 
 (defn start-editing
   "Starts the editing loop. The only way to escape is by pressing escape."
@@ -46,9 +48,9 @@
   ([& args]
    (let [filename (first args)
          lines    (split (slurp filename) #"\n")
-         pos      {:x 0 :y 0}
+         pos      [0 0]
          screen   (scrn/get-screen :unix)
-         state    {:lines lines :pos pos :window []}]
+         state    {:lines lines :pos pos}]
      (scrn/start screen)
      (start-editing               ; By using this method, we ignore any resizings and
        screen                     ; just tell the user to live with it
