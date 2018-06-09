@@ -1,5 +1,9 @@
 # simple-editor
 
+[![Build Status](https://travis-ci.org/cheukyin699/cljeditor.svg?branch=master)](https://travis-ci.org/cheukyin699/cljeditor)
+
+[![asciicast](https://asciinema.org/a/186414.png)](https://asciinema.org/a/186414)
+
 A simple, proof-of-concept, Clojure-based editor. Inspired by [rohitpaulk's
 simple Clojure text editor][rhpk-ed]. Can handle bigger files though.
 
